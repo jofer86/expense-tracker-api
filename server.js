@@ -2,14 +2,14 @@ const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
-const errorHandler = require('./middleware/error');
-const connectDB = require('./config/db');
+const errorHandler = require('./middleware/error.middleware');
+const connectDB = require('./config/db.config');
 // Env vars
 dotenv.config({ path: './config/config.env' });
 // DB Connection
 connectDB();
 // Routes
-const users = require('./routes/users');
+const users = require('./routes/users.routes');
 
 const app = express();
 app.use(express.json());

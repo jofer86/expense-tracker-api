@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const ErrorResponse = require('../utils/errorResponse');
-const asyncHandler = require('../middleware/async');
+const User = require('../models/User.model');
+const ErrorResponse = require('../utils/errorResponse.utils');
+const asyncHandler = require('../middleware/async.middleware');
 
 // @desc Get all Users
 // @route GET /api/v1/Users
