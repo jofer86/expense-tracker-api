@@ -1,8 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, getUser, createUser, updateUser, deleteUser } = require('../controllers/users.controller');
+const {
+  addExpense,
+  addTransaction,
+  createExpenseMonth,
+  getUsers,
+  getUser,
+  getUserBank,
+  createUser,
+  updateUser,
+  deleteUser
+} = require('../controllers/users.controller');
 
 router.route('/').get(getUsers).post(createUser);
 router.route('/:id').get(getUser).put(updateUser).delete(deleteUser);
+router.route('/:id/bank').get(getUserBank);
+router.route('/:id/create_expense_month').post(createExpenseMonth);
+router.route('/:id/add_transaction').post(addTransaction);
+router.route('/:id/bank/:bank_id/add_transaction').post(addTransaction);
 
 module.exports = router;
