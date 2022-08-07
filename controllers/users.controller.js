@@ -94,10 +94,8 @@ exports.getUserBank = asyncHandler(async (req, res, next) => {
 exports.addTransaction = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) return throwError(`User not found with id of ${req.params.id}`, 404);
-
   const bank = await Bank.findOne({ user: req.params.id });
   if (!bank) return throwError(`No bank found for user with id of ${req.params.id}`, 404);
-
   const expenseMonth = await ExpenseMonth.findById(req.body.expense_month_id);
   if (!expenseMonth) return throwError(`Expense month not found`, 404);
 
@@ -110,12 +108,12 @@ exports.addTransaction = asyncHandler(async (req, res, next) => {
     expenseMonth: expenseMonth._id
   });
 
-  const persist = await user.persistTransaction(transaction, bank, expenseMonth);
+  const persistData = await user.persistTransaction(transaction, bank, expenseMonth);
 
-  if (!persist) return throwError(`Transaction not added`, 400);
+  if (!persistData) return throwError(`Transaction not added`, 400);
   res.status(200).json({
     success: true,
-    data: persist
+    data: persistData
   });
 });
 
