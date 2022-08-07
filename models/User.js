@@ -96,10 +96,4 @@ UserSchema.methods.createExpenseMonth = async function (name) {
   return expenseMonth.save();
 };
 
-UserSchema.methods.getMonthTransactions = async function (monthId, type) {
-  let transactions = await Transaction.find({ expenseMonth: monthId, transactionType: type });
-
-  return transactions;
-};
-
 module.exports = mongoose.model('User', UserSchema);

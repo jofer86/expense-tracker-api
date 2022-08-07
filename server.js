@@ -10,6 +10,7 @@ dotenv.config({ path: './config/config.env' });
 connectDB();
 // Routes
 const users = require('./routes/users.routes');
+const expenseMonths = require('./routes/expense-months.routes');
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/api/v1/users', users);
+app.use('/api/v1/users/:id/expense_months', expenseMonths);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5050;
