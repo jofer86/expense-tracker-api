@@ -57,9 +57,34 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.post('save', function (user) {
   let bank = new Bank();
-  bank.totalBalance = 69;
+  bank.totalBalance = 0;
   bank.user = user._id.toString();
   bank.save();
 });
+
+UserSchema.methods.persistTransaction = async function (transaction, bank, expenseMonth, res) {
+  if (transaction.transactionType === 'expense') {
+    bank.totalBalance -= transaction.amount;
+    bank.totalExpense += transaction.amount;
+    expenseMonth.totalExpense += transaction.amount;
+    expenseMonth.totalBalance -= transaction.amount;
+  }
+
+  if (transaction.transactionType === 'income') {
+    bank.totalBalance += transaction.amount;
+    bank.totalIncome += transaction.amount;
+    expenseMonth.totalIncome += transaction.amount;
+    expenseMonth.totalBalance += transaction.amount;
+  }
+
+  try {
+    await bank.save();
+    await expenseMonth.save();
+    await transaction.save();
+    return { bank, expenseMonth, transaction };
+  } catch {
+    return false;
+  }
+};
 
 module.exports = mongoose.model('User', UserSchema);

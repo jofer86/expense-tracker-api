@@ -110,47 +110,24 @@ exports.addTransaction = asyncHandler(async (req, res, next) => {
     expenseMonth: expenseMonth._id
   });
 
-  if (transaction.transactionType === 'expense') {
-    bank.totalBalance -= transaction.amount;
-    bank.totalExpense += transaction.amount;
-    expenseMonth.totalExpense += transaction.amount;
-    expenseMonth.totalBalance -= transaction.amount;
-  }
+  const persist = await user.persistTransaction(transaction, bank, expenseMonth);
 
-  if (transaction.transactionType === 'income') {
-    bank.totalBalance += transaction.amount;
-    bank.totalIncome += transaction.amount;
-    expenseMonth.totalIncome += transaction.amount;
-    expenseMonth.totalBalance += transaction.amount;
-  }
-
-  try {
-    await bank.save();
-    await expenseMonth.save();
-    await transaction.save();
-    res.status(200).json({
-      success: true,
-      data: {
-        user,
-        bank,
-        transaction,
-        expenseMonth
-      }
-    });
-  } catch {
-    res.status(500).json({
-      success: false,
-      message: 'Server Error'
-    });
-  }
+  if (!persist) return throwError(`Transaction not added`, 400);
+  res.status(200).json({
+    success: true,
+    data: persist
+  });
 });
 
 // @desc create an expense month.
 // @route POST /api/v1/Users/:id/create_expense_month
 // @access Public
 exports.createExpenseMonth = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) return throwError(`User not found with id of ${req.params.id}`, 404);
   const expenseMonth = new ExpenseMonth({
-    name: req.body.name
+    name: req.body.name,
+    user: user._id
   });
 
   if (expenseMonth.save()) {
