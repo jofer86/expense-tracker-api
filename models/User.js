@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Bank = require('./Bank');
+const ExpenseMonth = require('./ExpenseMonth');
 const slugify = require('slugify');
 
 const UserSchema = new mongoose.Schema({
@@ -85,6 +86,13 @@ UserSchema.methods.persistTransaction = async function (transaction, bank, expen
   } catch {
     return false;
   }
+};
+
+UserSchema.methods.createExpenseMonth = async function (name) {
+  let expenseMonth = new ExpenseMonth();
+  expenseMonth.user = this._id;
+  expenseMonth.name = name;
+  return expenseMonth.save();
 };
 
 module.exports = mongoose.model('User', UserSchema);

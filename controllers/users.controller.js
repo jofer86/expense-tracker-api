@@ -125,17 +125,12 @@ exports.addTransaction = asyncHandler(async (req, res, next) => {
 exports.createExpenseMonth = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.params.id);
   if (!user) return throwError(`User not found with id of ${req.params.id}`, 404);
-  const expenseMonth = new ExpenseMonth({
-    name: req.body.name,
-    user: user._id
+  const saveExpenseMonth = await user.createExpenseMonth(req.body.name);
+
+  if (!saveExpenseMonth) return throwError(`Expense month not created`, 400);
+
+  return res.status(200).json({
+    success: true,
+    data: saveExpenseMonth
   });
-
-  if (expenseMonth.save()) {
-    return res.status(200).json({
-      success: true,
-      data: expenseMonth
-    });
-  }
-
-  return next(new ErrorResponse(`Something aint right`, 500));
 });
