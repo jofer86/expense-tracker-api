@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
 
 const TransactionSchema = new mongoose.Schema({
   description: {
@@ -20,7 +19,7 @@ const TransactionSchema = new mongoose.Schema({
       message: 'Transaction type must be either income or expense'
     }
   },
-  espenseMonth: {
+  expenseMonth: {
     type: mongoose.Schema.ObjectId,
     ref: 'ExpenseMonth'
   },

@@ -134,3 +134,20 @@ exports.createExpenseMonth = asyncHandler(async (req, res, next) => {
     data: saveExpenseMonth
   });
 });
+
+// @desc get all monthly transactions for a user
+// @route GET /api/v1/Users/:id/expense_months/:expense_id
+// @access Public
+exports.getMonthTransactions = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) return throwError(`User not found with id of ${req.params.id}`, 404);
+
+  const transactions = await user.getMonthTransactions(req.params.expense_month_id, req.query.type);
+
+  if (!transactions) return throwError(`No transactions found for user with id of ${req.params.id}`, 404);
+
+  return res.status(200).json({
+    success: true,
+    data: transactions
+  });
+});

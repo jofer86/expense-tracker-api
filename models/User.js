@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Bank = require('./Bank');
 const ExpenseMonth = require('./ExpenseMonth');
+const Transaction = require('./Transaction');
 const slugify = require('slugify');
 
 const UserSchema = new mongoose.Schema({
@@ -63,7 +64,7 @@ UserSchema.post('save', function (user) {
   bank.save();
 });
 
-UserSchema.methods.persistTransaction = async function (transaction, bank, expenseMonth, res) {
+UserSchema.methods.persistTransaction = async function (transaction, bank, expenseMonth) {
   if (transaction.transactionType === 'expense') {
     bank.totalBalance -= transaction.amount;
     bank.totalExpense += transaction.amount;
@@ -93,6 +94,12 @@ UserSchema.methods.createExpenseMonth = async function (name) {
   expenseMonth.user = this._id;
   expenseMonth.name = name;
   return expenseMonth.save();
+};
+
+UserSchema.methods.getMonthTransactions = async function (monthId, type) {
+  let transactions = await Transaction.find({ expenseMonth: monthId, transactionType: type });
+
+  return transactions;
 };
 
 module.exports = mongoose.model('User', UserSchema);
