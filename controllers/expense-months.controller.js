@@ -26,9 +26,13 @@ exports.getExpenseMonth = asyncHandler(async (req, res, next) => {
   let type = req.query?.type;
   let transactions;
   if (type) {
-    transactions = await Transaction.find({ expenseMonth: expenseMonth._id, transactionType: type });
+    transactions = await Transaction.find({ expenseMonth: expenseMonth._id, transactionType: type }).select(
+      '_id description amount transactionType createdAt'
+    );
   } else {
-    transactions = await Transaction.find({ expenseMonth: expenseMonth._id });
+    transactions = await Transaction.find({ expenseMonth: expenseMonth._id }).select(
+      '_id description amount transactionType createdAt'
+    );
   }
 
   let payload = { ...expenseMonth.toObject(), transactions: transactions };
